@@ -11,49 +11,29 @@ services:
     mysql:
       image: mysql:8.0
       container_name: symfony-mysql
-      working_dir: /application
       ports:
         - "3306:3306"
-      volumes:
-        - .:/application
       environment:
-        - MYSQL_ROOT_PASSWORD=yourpassword
+        - MYSQL_ROOT_PASSWORD=sanane123
         - MYSQL_DATABASE=docker
         - MYSQL_USER=docker
-        - MYSQL_PASSWORD=yourpassword
-
-    postgres:
-      image: postgres:9.6-alpine
-      container_name: symfony-postgres
-      working_dir: /application
-      ports:
-        - "5432:5432"
-      volumes:
-        - .:/application
-      environment:
-        - POSTGRES_USER=root
-        - POSTGRES_PASSWORD=yourpassword
-        - POSTGRES_DB=docker
-
-    elasticsearch:
-      image: elasticsearch:5.4-alpine
-      container_name: symfony-elasticsearch
+        - MYSQL_PASSWORD=sanane123
 
     webserver:
       image: nginx:alpine
       container_name: symfony-webserver
-      working_dir: /application
+      working_dir: /var/www/html
       volumes:
-          - .:/application
-          - ./phpdocker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+          - ./application:/var/www/html
+          - ./docker/nginx/site.conf:/etc/nginx/conf.d/default.conf
       ports:
        - "8000:80"
 
     php-fpm:
-      build: phpdocker/php-fpm
+      build: docker/php-fpm
       container_name: symfony-php-fpm
-      working_dir: /application
+      working_dir: /var/www/html
       volumes:
-        - .:/application
-        - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.0/fpm/conf.d/99-overrides.ini
+        - ./application:/var/www/html
+        - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.0/fpm/conf.d/99-overrides.ini
 
